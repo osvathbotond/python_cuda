@@ -1,27 +1,6 @@
-#include <cuda_runtime.h>
-#include <device_launch_parameters.h>
-#include <cuda.h>
-#include <cuda_runtime_api.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-
-#include <stdio.h>
-#include <vector>
-#include <cmath>
-#include <iostream>
-#include <fstream>
-#include <random>
-#include <typeinfo>
-#include <thread>
-#include <cstdlib>
-#include <algorithm>
-#include <cassert>
-#include <numeric>
-#include <string>
-
 #include "vector_functions.cuh"
 #include "exceptions.hpp"
+
 
 static const int num_threads = 512;
 
@@ -70,9 +49,8 @@ __global__ void normKernel(const float* vec, float* res, const int n, const bool
 
 }
 
-float norm(float* vec, float p, const size_t vector_length) {
+float normCuda(const float* d_vec, const float p, const size_t vector_length) {
     // Host-side variables
-    std::vector <float> pows(vector_length);
     float res;
 
     size_t bytes = vector_length * sizeof(float);
@@ -81,15 +59,10 @@ float norm(float* vec, float p, const size_t vector_length) {
     int num_blocks = (vector_length + num_threads - 1) / num_threads;
 
     // Pointers to the device-side variables
-    float *d_vec, *d_res1, *d_res2;
+    float *d_res1, *d_res2;
 
     // Allocate the memory on the GPU and move the vector (with error handling)
     cudaError_t err = cudaSuccess;
-    err = cudaMalloc(&d_vec, bytes);
-    if (err != cudaSuccess) {
-        throw CudaMallocError(cudaGetErrorString(err));
-    }
-
     err = cudaMalloc(&d_res1, bytes);
     if (err != cudaSuccess) {
         throw CudaMallocError(cudaGetErrorString(err));
@@ -98,11 +71,6 @@ float norm(float* vec, float p, const size_t vector_length) {
     err = cudaMalloc(&d_res2, bytes);
     if (err != cudaSuccess) {
         throw CudaMallocError(cudaGetErrorString(err));
-    }
-
-    err = cudaMemcpy(d_vec, vec, bytes, cudaMemcpyHostToDevice);
-    if (err != cudaSuccess) {
-        throw CudaCopyError(cudaGetErrorString(err));
     }
 
     // The first sum-reduction. Each block gives back a number, so the first num_blocks elements
@@ -147,11 +115,6 @@ float norm(float* vec, float p, const size_t vector_length) {
     }
 
     // Freeing the memory on the device. Not doing so can cause memory-leak.
-    err = cudaFree(d_vec);
-    if (err != cudaSuccess) {
-        throw CudaFreeError(cudaGetErrorString(err));
-    }
-
     err = cudaFree(d_res1);
     if (err != cudaSuccess) {
         throw CudaFreeError(cudaGetErrorString(err));

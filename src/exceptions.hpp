@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 
+
 class NumpyShapeError: public std::exception {
     public:
         NumpyShapeError(const std::string& message): _message(message) {}
