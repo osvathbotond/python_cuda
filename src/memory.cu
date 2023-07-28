@@ -50,7 +50,6 @@ void cudaHost2Devide(cuda_shared_ptr d_data, float* data, size_t bytes) {
     cudaError_t err = cudaSuccess;
     err = cudaMemcpy(d_data.get(), data, bytes, cudaMemcpyHostToDevice);
     if (err != cudaSuccess) {
-        std::cout << cudaGetErrorString(err) << std::endl;
         throw CudaCopyError(cudaGetErrorString(err));
     }
 }
