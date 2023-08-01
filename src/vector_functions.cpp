@@ -14,9 +14,9 @@ Vector vectorAdd(Vector& vec1, Vector& vec2) {
 
     Vector res(res_np_array);
 
-    addCuda(vec1.getDeviceData().get(), vec2.getDeviceData().get(), res.getDeviceData().get(), n);
+    addCuda(vec1.getDeviceData(), vec2.getDeviceData(), res.getDeviceData(), n);
 
-     return res;
+    return res;
 }
 
 Vector vectorSub(Vector& vec1, Vector& vec2) {
@@ -28,16 +28,15 @@ Vector vectorSub(Vector& vec1, Vector& vec2) {
 
     Vector res(res_np_array);
 
-    subCuda(vec1.getDeviceData().get(), vec2.getDeviceData().get(), res.getDeviceData().get(), n);
+    subCuda(vec1.getDeviceData(), vec2.getDeviceData(), res.getDeviceData(), n);
 
-     return res;
+    return res;
 }
 
 float vectorNorm(Vector& vec, const float p) {
     size_t n = vec.getSize();
 
-    float res = normCuda(vec.getDeviceData().get(), p, n);
+    float res = normCuda(vec.getDeviceData(), p, n);
 
     return res;
-
 }

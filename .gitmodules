@@ -1,0 +1,3 @@
+[submodule "submodules/CudaSharedPtr"]
+	path = submodules/CudaSharedPtr
+	url = https://github.com/roostaiyan/CudaSharedPtr.git

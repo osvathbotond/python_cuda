@@ -1,6 +1,5 @@
 #include "vector.hpp"
 #include "exceptions.hpp"
-#include "memory.cuh"
 
 
 Vector::Vector(boost::python::numpy::ndarray& np_array): np_array(np_array) {
@@ -18,13 +17,13 @@ Vector::Vector(boost::python::numpy::ndarray& np_array): np_array(np_array) {
     bytes = n * sizeof(float);
     data = reinterpret_cast<float*>(np_array.get_data());
 
-    d_data = getDevicePointer(bytes);
+    d_data.create(n);
 }
 
 void Vector::device2Host() {
-    cudaDevice2Host(data, d_data, bytes);
+    d_data.download(data);
 }
 
 void Vector::host2Device() {
-    cudaHost2Devide(d_data, data, bytes);
+    d_data.upload(data, n);
 }
