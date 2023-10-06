@@ -1,6 +1,4 @@
 #include <Python.h>
-// #include <boost/python.hpp>
-// #include <boost/python/numpy.hpp>
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 
@@ -14,6 +12,7 @@
 PYBIND11_MODULE(python_cuda, m) {
     pybind11::class_<Vector>(m, "Vector")
         .def(pybind11::init<pybind11::array_t<float> &>())
+        .def(pybind11::init<pybind11::array_t<float> &, bool>())
         .def("get_array", &Vector::getArray)
         .def("device2host", &Vector::device2Host)
         .def("host2device", &Vector::host2Device)

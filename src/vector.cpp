@@ -7,7 +7,7 @@
 #include <iostream>
 
 
-Vector::Vector(pybind11::array_t<float> array): m_array(array) {
+Vector::Vector(pybind11::array_t<float>& array): m_array(array) {
     pybind11::buffer_info buffer = array.request();
 
     if (buffer.format != pybind11::format_descriptor<float>::format()) {
@@ -20,6 +20,30 @@ Vector::Vector(pybind11::array_t<float> array): m_array(array) {
     m_data = static_cast<float*>(buffer.ptr);
     m_n = buffer.shape[0];
     d_data.create(m_n);
+}
+
+Vector::Vector(pybind11::array_t<float>& array, bool copy) {
+    pybind11::buffer_info buffer = array.request();
+
+    if (buffer.format != pybind11::format_descriptor<float>::format()) {
+        throw NumpyTypeError("The arrays must be of type np.float32!");
+    }
+    if (buffer.ndim != 1) {
+        throw NumpyShapeError("Only 1 dimensional arrays are supported!");
+    }
+
+    m_n = buffer.shape[0];
+    d_data.create(m_n);
+
+    if (copy) {
+         pybind11::buffer_info new_buffer = m_array.request();
+         m_data = static_cast<float*>(new_buffer.ptr);
+         m_array = pybind11::array_t<float>(buffer);
+    } else {
+        m_array = array;
+        m_data = static_cast<float*>(buffer.ptr);
+    }
+
 }
 
 Vector::Vector(size_t n, float fill): m_n(n) {

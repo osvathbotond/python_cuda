@@ -7,7 +7,8 @@
 
 class Vector {
     public:
-        Vector(pybind11::array_t<float> array);
+        Vector(pybind11::array_t<float>& array);
+        Vector(pybind11::array_t<float>& array, bool copy);
         Vector(size_t n, float fill);
         // Vector(const Vector &m) = delete;
         // Vector & operator= (const Vector &) = delete;
