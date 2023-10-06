@@ -20,4 +20,13 @@ PYBIND11_MODULE(python_cuda, m) {
         .def("__add__", &vectorAdd)
         .def("__sub__", &vectorSub)
         .def("add", &Vector::add);
+
+    pybind11::register_exception<NumpyShapeError>(m, "NumpyShapeError");
+    pybind11::register_exception<NumpyTypeError>(m, "NumpyTypeError");
+    pybind11::register_exception<NumpyLengthError>(m, "NumpyLengthError");
+    pybind11::register_exception<CudaCopyError>(m, "CudaCopyError");
+    pybind11::register_exception<CudaMallocError>(m, "CudaMallocError");
+    pybind11::register_exception<CudaKernelError>(m, "CudaKernelError");
+    pybind11::register_exception<CudaFreeError>(m, "CudaFreeError");
+
 }
