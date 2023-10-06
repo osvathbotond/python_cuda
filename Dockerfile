@@ -1,12 +1,12 @@
 FROM nvidia/cuda:12.2.0-devel-ubuntu22.04
 
-RUN apt update -y
-RUN apt install -y python3
-RUN apt install -y python3-pip
-RUN apt install -y python3-dev
-RUN apt install -y libboost-python-dev
-RUN apt install -y libboost-numpy-dev
+RUN :\
+    && apt update \
+    && DEBIAN_FRONTEND=noninteractive apt install -y python3 \
+                                                     python3-pip \
+                                                     python3-dev \
+    && :
 
-RUN pip3 install numpy
+RUN python3 -m pip --no-cache-dir --disable-pip-version-check install numpy pybind11
 
 WORKDIR /workspace

@@ -1,22 +1,27 @@
 #pragma once
 
-#include <boost/python/numpy.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
 #include <cudasharedptr.h>
 
 
 class Vector {
     public:
-        Vector(boost::python::numpy::ndarray& np_array);
+        Vector(pybind11::array_t<float> array);
+        Vector(size_t n, float fill);
+        // Vector(const Vector &m) = delete;
+        // Vector & operator= (const Vector &) = delete;
         void device2Host();
         void host2Device();
-        boost::python::numpy::ndarray getArray() {return np_array;};
-        float* getData() {return data;};
+        pybind11::array_t<float> getArray() {return m_array;};
+        float* getData() {return m_data;};
         float* getDeviceData() {return d_data.data();};
-        size_t getSize() {return n;};
+        const float* getDeviceData() const {return d_data.data();};
+        size_t getSize() const {return m_n;};
+        void add(const Vector& vec);
     private:
-        float* data = nullptr;
+        float* m_data;
+        size_t m_n;
+        pybind11::array_t<float> m_array;
         fun::cuda::shared_ptr<float> d_data;
-        size_t n;
-        size_t bytes;
-        boost::python::numpy::ndarray np_array;
 };

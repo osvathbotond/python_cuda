@@ -1,10 +1,14 @@
 # python_cuda
-POC for using CUDA from Python via Boost.Python
+POC for using CUDA from Python via pybind11
 
 # Source files
 
 - `*.cu`: They contain the GPU kernel codes and the C++ interface definitions.
-- `vector_functions.cuh`: A header file for the C++ interfaces.
+- `vector.hpp`: A header for the Vector class wrapping the numpy array and the CUDA pointer.
+- `vector.cpp`: The implementation of the Vector class.
+- `vector_functions.cuh`: A header file for the C++ interfaces of the CUDA functions defined in the `.cu` files.
+- `vector_functions.hpp`: A header file the Vector-wrapped interfaces of the CUDA functions.
+- `vector_functions.cpp`: The implementation of the Vector-wrapped interfaces of the CUDA functions.
 - `exceptions.hpp`: A header file for the C++ exceptions.
 - `python_cuda.cpp`: It contains the Python interfaces.
 
@@ -12,7 +16,7 @@ POC for using CUDA from Python via Boost.Python
 
 I am sure there are nicer ways do to compile and link the code, but here is the one used by the `build.sh`:
 - It compiles the `.cu` files to `.o` files with `nvcc`
-- It compiles the `python_cuda.cpp` to `python_cuda.o` with `g++`
+- It compiles the `.cpp` files to `.o` files with `nvcc`
 - It links the `.o` files to a `python_cuda.so` file that can be used from Python with `nvcc`
 
 # Docker

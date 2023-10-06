@@ -5,72 +5,84 @@
 
 class NumpyShapeError: public std::exception {
     public:
-        NumpyShapeError(const std::string& message): _message(message) {}
+        NumpyShapeError(const std::string& message): m_message(message) {}
 
         const char* what() const noexcept override {
-            return _message.c_str();
+            return m_message.c_str();
         }
     
     private:
-        std::string _message;
+        std::string m_message;
 };
 
 class NumpyTypeError: public std::exception {
     public:
-        NumpyTypeError(const std::string& message): _message(message) {}
+        NumpyTypeError(const std::string& message): m_message(message) {}
 
         const char* what() const noexcept override {
-            return _message.c_str();
+            return m_message.c_str();
         }
     
     private:
-        std::string _message;
+        std::string m_message;
+};
+
+class NumpyLengthError: public std::exception {
+    public:
+        NumpyLengthError(const std::string& message): m_message(message) {}
+
+        const char* what() const noexcept override {
+            return m_message.c_str();
+        }
+    
+    private:
+        std::string m_message;
 };
 
 class CudaCopyError: public std::exception {
     public:
-        CudaCopyError(const std::string& message): _message(message) {}
+        CudaCopyError(const std::string& message): m_message(message) {}
 
         const char* what() const noexcept override {
-            return _message.c_str();
+            return m_message.c_str();
         }
     
     private:
-        std::string _message;
+        std::string m_message;
 };
 
 class CudaMallocError: public std::exception {
     public:
-        CudaMallocError(const std::string& message): _message(message) {}
+        CudaMallocError(const std::string& message): m_message(message) {}
 
         const char* what() const noexcept override {
-            return _message.c_str();
+            return m_message.c_str();
         }
     
     private:
-        std::string _message;
+        std::string m_message;
 };
 
 class CudaKernelError: public std::exception {
     public:
-        CudaKernelError(const std::string& message): _message(message) {}
+        CudaKernelError(const std::string& message): m_message(message) {}
 
         const char* what() const noexcept override {
-            return _message.c_str();
+            return m_message.c_str();
         }
     
     private:
-        std::string _message;
+        std::string m_message;
 };
 
 class CudaFreeError: public std::exception {
     public:
-        CudaFreeError(const std::string& message): _message(message) {}
+        CudaFreeError(const std::string& message): m_message(message) {}
 
         const char* what() const noexcept override {
-            return _message.c_str();
+            return m_message.c_str();
         }
     
     private:
-        std::string _message;
+        std::string m_message;
 };

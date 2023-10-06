@@ -2,7 +2,8 @@
 
 #include "vector.hpp"
 
+Vector vectorAdd(const Vector& vec1, const Vector& vec2);
+void vectorInplaceAdd(Vector& vec1, const Vector& vec2);
 
-Vector vectorAdd(Vector& vec1, Vector& vec2);
-Vector vectorSub(Vector& vec1, Vector& vec2);
-float vectorNorm(Vector& vec, const float p);
+Vector vectorSub(const Vector& vec1, const Vector& vec2);
+float vectorNorm(const Vector& vec, const float p);
