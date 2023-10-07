@@ -16,4 +16,4 @@ find "src/" -type f -name "*.cpp" | while read -r cpp_file; do
 
 done
 
-nvcc -O3 -std=c++17 -Xcompiler -fPIC -shared build/*.o -o python_cuda.so
+nvcc -O3 -std=c++17 -Xcompiler -fPIC -shared build/*.o -o python_cuda$(python3-config --extension-suffix)
