@@ -72,9 +72,11 @@ Vector Vector::operator-(const Vector& other) const {
 }
 
 Vector Vector::operator*(float scalar) const {
-    Vector res(getSize(), 0);
+    size_t n = getSize();
 
-    scaleCuda(getDeviceData(), scalar, res.getDeviceData(), getSize());
+    Vector res(n, 0);
+
+    scaleCuda(getDeviceData(), scalar, res.getDeviceData(), n);
 
     return res;
 }
