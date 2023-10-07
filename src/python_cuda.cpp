@@ -11,8 +11,7 @@
 
 PYBIND11_MODULE(python_cuda, m) {
     pybind11::class_<Vector>(m, "Vector")
-        .def(pybind11::init<pybind11::array_t<float> &>())
-        .def(pybind11::init<pybind11::array_t<float> &, bool>())
+        .def(pybind11::init<pybind11::array_t<float> &, bool>(), pybind11::arg("array"), pybind11::arg("copy") = false)
         .def("get_array", &Vector::getArray)
         .def("device2host", &Vector::device2Host)
         .def("host2device", &Vector::host2Device)
