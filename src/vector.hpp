@@ -10,6 +10,10 @@ class Vector {
         Vector(pybind11::array_t<float>& array);
         Vector(pybind11::array_t<float>& array, bool copy);
         Vector(size_t n, float fill);
+        Vector operator+(const Vector& other) const;
+        Vector operator-(const Vector& other) const;
+        Vector operator*(float scalar) const;
+        float norm(float p) const;
         // Vector(const Vector &m) = delete;
         // Vector & operator= (const Vector &) = delete;
         void device2Host();
@@ -20,6 +24,8 @@ class Vector {
         const float* getDeviceData() const {return d_data.data();};
         size_t getSize() const {return m_n;};
         void add(const Vector& vec);
+        void sub(const Vector& vec);
+        void scale(float c);
     private:
         float* m_data;
         size_t m_n;

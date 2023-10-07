@@ -7,8 +7,6 @@ POC for using CUDA from Python via pybind11
 - `vector.hpp`: A header for the Vector class wrapping the numpy array and the CUDA pointer.
 - `vector.cpp`: The implementation of the Vector class.
 - `vector_functions.cuh`: A header file for the C++ interfaces of the CUDA functions defined in the `.cu` files.
-- `vector_functions.hpp`: A header file the Vector-wrapped interfaces of the CUDA functions.
-- `vector_functions.cpp`: The implementation of the Vector-wrapped interfaces of the CUDA functions.
 - `exceptions.hpp`: A header file for the C++ exceptions.
 - `python_cuda.cpp`: It contains the Python interfaces.
 

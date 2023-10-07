@@ -1,11 +1,10 @@
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/operators.h> // for the self + self, etc.
 #include <pybind11/numpy.h>
 
 #include "exceptions.hpp"
 #include "vector.hpp"
-#include "vector_functions.cuh"
-#include "vector_functions.hpp"
 #include <cudasharedptr.h>
 
 
@@ -17,10 +16,15 @@ PYBIND11_MODULE(python_cuda, m) {
         .def("gpu2cpu", &Vector::device2Host, "Copy the data from the device (GPU) to the host (CPU). Equivalent to device2host.")
         .def("host2device", &Vector::host2Device, "Copy the data from the host (CPU) to the device (GPU). Equivalent to cpu2gpu.")
         .def("cpu2gpu", &Vector::host2Device, "Copy the data from the host (CPU) to the device (GPU). Equivalent to host2device.")
-        .def("norm", &vectorNorm, "Calculate the p-norm of the vector.", pybind11::arg("p") = 2)
-        .def("__add__", &vectorAdd)
-        .def("__sub__", &vectorSub)
-        .def("add", &Vector::add, "Add the vector vec inplace.", pybind11::arg("vec"));
+        .def("norm", &Vector::norm, "Calculate the p-norm of the vector.", pybind11::arg("p") = 2)
+        .def(pybind11::self + pybind11::self)
+        .def(pybind11::self - pybind11::self)
+        .def(pybind11::self * float())
+        .def("__rmul__", &Vector::operator*, pybind11::is_operator()) // .def(float() * pybind11::self) was not working
+        .def("__len__", &Vector::getSize)
+        .def("add", &Vector::add, "Add the vector vec inplace.", pybind11::arg("vec"))
+        .def("sub", &Vector::add, "Substract the vector vec inplace.", pybind11::arg("vec"))
+        .def("scale", &Vector::scale, "Scale the vector by c.", pybind11::arg("c"));
 
     pybind11::register_exception<NumpyShapeError>(m, "NumpyShapeError");
     pybind11::register_exception<NumpyTypeError>(m, "NumpyTypeError");

@@ -2,7 +2,7 @@
 
 #include "vector.hpp"
 #include "exceptions.hpp"
-#include "vector_functions.hpp"
+#include "vector_functions.cuh"
 
 #include <iostream>
 
@@ -41,8 +41,76 @@ Vector::Vector(size_t n, float fill): m_n(n) {
     d_data.create(m_n);
 }
 
-void Vector::add(const Vector& vec) {
-    vectorInplaceAdd(*this, vec);
+Vector Vector::operator+(const Vector& other) const {
+    size_t n1 = getSize();
+    size_t n2 = other.getSize();
+
+    if (n1 != n2) {
+        throw NumpyLengthError("The two arrays must have the same number of elements!");
+    }
+
+    Vector res(n1, 0);
+
+    addCuda(getDeviceData(), other.getDeviceData(), res.getDeviceData(), n1);
+
+    return res;
+}
+
+Vector Vector::operator-(const Vector& other) const {
+    size_t n1 = getSize();
+    size_t n2 = other.getSize();
+
+    if (n1 != n2) {
+        throw NumpyLengthError("The two arrays must have the same number of elements!");
+    }
+
+    Vector res(n1, 0);
+
+    subCuda(getDeviceData(), other.getDeviceData(), res.getDeviceData(), n1);
+
+    return res;
+}
+
+Vector Vector::operator*(float scalar) const {
+    Vector res(getSize(), 0);
+
+    scaleCuda(getDeviceData(), scalar, res.getDeviceData(), getSize());
+
+    return res;
+}
+
+float Vector::norm(float p) const {
+    size_t n = getSize();
+
+    float res = normCuda(getDeviceData(), p, n);
+
+    return res;
+}
+
+void Vector::add(const Vector& other) {
+    size_t n1 = getSize();
+    size_t n2 = other.getSize();
+
+    if (n1 != n2) {
+        throw NumpyLengthError("The two arrays must have the same number of elements!");
+    }
+
+    addCuda(getDeviceData(), other.getDeviceData(), getDeviceData(), n1);
+}
+
+void Vector::sub(const Vector& other) {
+    size_t n1 = getSize();
+    size_t n2 = other.getSize();
+
+    if (n1 != n2) {
+        throw NumpyLengthError("The two arrays must have the same number of elements!");
+    }
+
+    subCuda(getDeviceData(), other.getDeviceData(), getDeviceData(), n1);
+}
+
+void Vector::scale(float c) {
+    scaleCuda(getDeviceData(), c, getDeviceData(), getSize());
 }
 
 void Vector::device2Host() {

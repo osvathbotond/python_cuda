@@ -4,7 +4,7 @@
 
 static const int num_threads = 512;
 
-__global__ void subKernel(const float* vec1, const float* vec2, float* res, size_t vector_length) {
+__global__ void subKernel(const float* vec1, const float* vec2, float* res, const size_t vector_length) {
     int tid = blockIdx.x * blockDim.x + threadIdx.x;
 
     if (tid < vector_length) {
