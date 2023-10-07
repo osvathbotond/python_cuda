@@ -1,15 +1,12 @@
-#include <Python.h>
-#include <pybind11/pybind11.h>
 #include <pybind11/operators.h> // for the self + self, etc.
-#include <pybind11/numpy.h>
 
 #include "exceptions.hpp"
 #include "vector.hpp"
-#include <cudasharedptr.h>
 
 
 PYBIND11_MODULE(python_cuda, m) {
     pybind11::class_<Vector>(m, "Vector", "1 dimensional vector of floats with CUDA support.")
+        .def(pybind11::init<size_t, float>(), "A vector with length n of values fill.", pybind11::arg("n"), pybind11::arg("fill") = 0)
         .def(pybind11::init<pybind11::array_t<float> &, bool>(), "By default, it will use the same memory for the device-side array as the input array. You can avoid it by setting copy=True.", pybind11::arg("array"), pybind11::arg("copy") = false)
         .def("get_array", &Vector::getArray, "Returns the data in numpy.ndarray. Note that it might be out-of-sync with the actual, GPU array if you modified that.")
         .def("device2host", &Vector::device2Host, "Copy the data from the device (GPU) to the host (CPU). Equivalent to gpu2cpu.")
