@@ -36,7 +36,7 @@ assert V1.get_array() is not t1
 assert V2.get_array() is t2
 
 norm_gpu = V1.norm(p)
-norm_cpu = np.sum(np.power(np.abs(t1), p))**(1/p)
+norm_cpu = np.linalg.norm(t1, p)
 
 assert np.allclose(norm_cpu, norm_gpu)
 
