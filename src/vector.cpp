@@ -20,9 +20,9 @@ Vector::Vector(pybind11::array_t<float>& array, bool copy = false) {
     d_data.create(m_n);
 
     if (copy) {
-         pybind11::buffer_info new_buffer = m_array.request();
-         m_data = static_cast<float*>(new_buffer.ptr);
-         m_array = pybind11::array_t<float>(buffer);
+        m_array = pybind11::array_t<float>(buffer);
+        pybind11::buffer_info new_buffer = m_array.request();
+        m_data = static_cast<float*>(new_buffer.ptr);
     } else {
         m_array = array;
         m_data = static_cast<float*>(buffer.ptr);

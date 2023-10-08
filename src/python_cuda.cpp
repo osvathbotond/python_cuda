@@ -20,7 +20,7 @@ PYBIND11_MODULE(python_cuda, m) {
         .def("__rmul__", &Vector::operator*, pybind11::is_operator()) // .def(float() * pybind11::self) was not working
         .def("__len__", &Vector::getSize)
         .def("add", &Vector::add, "Add the vector vec inplace.", pybind11::arg("vec"))
-        .def("sub", &Vector::add, "Substract the vector vec inplace.", pybind11::arg("vec"))
+        .def("sub", &Vector::sub, "Substract the vector vec inplace.", pybind11::arg("vec"))
         .def("scale", &Vector::scale, "Scale the vector by c.", pybind11::arg("c"));
 
     pybind11::register_exception<NumpyShapeError>(m, "NumpyShapeError");
