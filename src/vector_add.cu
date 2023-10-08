@@ -24,5 +24,3 @@ void addCuda(const float* d_vec1, const float* d_vec2, float* d_res, const size_
         throw CudaKernelError(cudaGetErrorString(err));
     }
 }
-
-

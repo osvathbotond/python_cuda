@@ -24,5 +24,3 @@ void scaleCuda(const float* d_vec, const float scalar, float* d_res, const size_
         throw CudaKernelError(cudaGetErrorString(err));
     }
 }
-
-

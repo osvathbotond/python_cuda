@@ -4,7 +4,8 @@
 
 static const int num_threads_per_block = 512;
 
-__global__ void normKernel(const float* vec, float* res, const int n, const bool power, const float p) {
+template<bool power>
+__global__ void normKernel(const float* vec, float* res, const int n, const float p) {
     __shared__ float partial_sum[num_threads_per_block];
 
     int tid = blockIdx.x * blockDim.x + threadIdx.x;
@@ -49,6 +50,9 @@ __global__ void normKernel(const float* vec, float* res, const int n, const bool
 
 }
 
+template __global__ void normKernel<true>(const float* vec, float* res, const int n, const float p);
+template __global__ void normKernel<false>(const float* vec, float* res, const int n, const float p);
+
 float normCuda(const float* d_vec, const float p, const size_t vector_length) {
     // Host-side variables
     float res;
@@ -75,7 +79,7 @@ float normCuda(const float* d_vec, const float p, const size_t vector_length) {
 
     // The first sum-reduction. Each block gives back a number, so the first num_blocks elements
     // of the result d_res will have the needed information for us (the partial sums).
-    normKernel<<<num_blocks, num_threads_per_block>>>(d_vec, d_res1, vector_length, true, p);
+    normKernel<true><<<num_blocks, num_threads_per_block>>>(d_vec, d_res1, vector_length, p);
     err = cudaGetLastError();
     if (err != cudaSuccess) {
         throw CudaKernelError(cudaGetErrorString(err));
@@ -87,11 +91,11 @@ float normCuda(const float* d_vec, const float p, const size_t vector_length) {
     int source_counter = 1;
     while (left > 1) {
         if (source_counter == 1) {
-            normKernel<<<num_blocks_red, num_threads_per_block>>>(d_res1, d_res2, left, false, p);
+            normKernel<false><<<num_blocks_red, num_threads_per_block>>>(d_res1, d_res2, left, p);
             source_counter = 2;
         }
         else {
-            normKernel<<<num_blocks_red, num_threads_per_block>>>(d_res2, d_res1, left, false, p);
+            normKernel<false><<<num_blocks_red, num_threads_per_block>>>(d_res2, d_res1, left, p);
             source_counter = 1;
         }
 
