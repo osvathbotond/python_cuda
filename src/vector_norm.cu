@@ -2,10 +2,10 @@
 #include "exceptions.hpp"
 
 
-static const int num_threads = 512;
+static const int num_threads_per_block = 512;
 
 __global__ void normKernel(const float* vec, float* res, const int n, const bool power, const float p) {
-    __shared__ float partial_sum[num_threads];
+    __shared__ float partial_sum[num_threads_per_block];
 
     int tid = blockIdx.x * blockDim.x + threadIdx.x;
     if (tid < n) {
@@ -55,8 +55,8 @@ float normCuda(const float* d_vec, const float p, const size_t vector_length) {
 
     size_t bytes = vector_length * sizeof(float);
 
-    // ceil(vector_length / num_threads)
-    int num_blocks = (vector_length + num_threads - 1) / num_threads;
+    // ceil(vector_length / num_threads_per_block)
+    int num_blocks = (vector_length + num_threads_per_block - 1) / num_threads_per_block;
 
     // Pointers to the device-side variables
     float *d_res1, *d_res2;
@@ -75,7 +75,7 @@ float normCuda(const float* d_vec, const float p, const size_t vector_length) {
 
     // The first sum-reduction. Each block gives back a number, so the first num_blocks elements
     // of the result d_res will have the needed information for us (the partial sums).
-    normKernel<<<num_blocks, num_threads>>>(d_vec, d_res1, vector_length, true, p);
+    normKernel<<<num_blocks, num_threads_per_block>>>(d_vec, d_res1, vector_length, true, p);
     err = cudaGetLastError();
     if (err != cudaSuccess) {
         throw CudaKernelError(cudaGetErrorString(err));
@@ -83,15 +83,15 @@ float normCuda(const float* d_vec, const float p, const size_t vector_length) {
 
     // Since a reduction gives us back num_blocks elements, we need to do it until num_blocks == 1.
     int left = num_blocks;
-    int num_blocks_red = (left + num_threads - 1) / num_threads;
+    int num_blocks_red = (left + num_threads_per_block - 1) / num_threads_per_block;
     int source_counter = 1;
     while (left > 1) {
         if (source_counter == 1) {
-            normKernel<<<num_blocks_red, num_threads>>>(d_res1, d_res2, left, false, p);
+            normKernel<<<num_blocks_red, num_threads_per_block>>>(d_res1, d_res2, left, false, p);
             source_counter = 2;
         }
         else {
-            normKernel<<<num_blocks_red, num_threads>>>(d_res2, d_res1, left, false, p);
+            normKernel<<<num_blocks_red, num_threads_per_block>>>(d_res2, d_res1, left, false, p);
             source_counter = 1;
         }
 
@@ -100,7 +100,7 @@ float normCuda(const float* d_vec, const float p, const size_t vector_length) {
             throw CudaKernelError(cudaGetErrorString(err));
         }
         left = num_blocks_red;
-        num_blocks_red = (left + num_threads - 1) / num_threads;
+        num_blocks_red = (left + num_threads_per_block - 1) / num_threads_per_block;
     }
 
     // Copying back to the host (only one number; the 0-th element of the d_res), with error handling.
