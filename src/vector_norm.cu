@@ -82,12 +82,10 @@ float normCuda(const float* d_vec, const float p, const size_t vector_length) {
     }
 
     // Since a reduction gives us back num_blocks elements, we need to do it until num_blocks == 1.
-    int left;
-    int num_blocks_red = num_blocks;
+    int left = num_blocks;
+    int num_blocks_red = (left + num_threads - 1) / num_threads;
     int source_counter = 1;
-    do {
-        left = num_blocks_red;
-        num_blocks_red = (left + num_threads - 1) / num_threads;
+    while (left > 1) {
         if (source_counter == 1) {
             normKernel<<<num_blocks_red, num_threads>>>(d_res1, d_res2, left, false, p);
             source_counter = 2;
@@ -101,7 +99,9 @@ float normCuda(const float* d_vec, const float p, const size_t vector_length) {
         if (err != cudaSuccess) {
             throw CudaKernelError(cudaGetErrorString(err));
         }
-    } while (num_blocks_red > 1);
+        left = num_blocks_red;
+        num_blocks_red = (left + num_threads - 1) / num_threads;
+    }
 
     // Copying back to the host (only one number; the 0-th element of the d_res), with error handling.
     if (source_counter == 1) {
