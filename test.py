@@ -73,3 +73,8 @@ V4.device2host()
 assert np.allclose((t4_orig+t1-t2)*2.1, V4.get_array())
 
 assert V4.get_array() is t4
+
+V5 = pc.sin(V1)
+V5.device2host()
+
+assert np.allclose(V5.get_array(), np.sin(t1))

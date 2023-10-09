@@ -1,7 +1,7 @@
 #include <pybind11/operators.h> // for the self + self, etc.
 
 #include "exceptions.hpp"
-#include "vector.hpp"
+#include "vector_functions.hpp"
 
 
 PYBIND11_MODULE(python_cuda, m) {
@@ -22,6 +22,8 @@ PYBIND11_MODULE(python_cuda, m) {
         .def("add", &Vector::add, "Add the vector vec inplace.", pybind11::arg("vec"))
         .def("sub", &Vector::sub, "Substract the vector vec inplace.", pybind11::arg("vec"))
         .def("scale", &Vector::scale, "Scale the vector by c.", pybind11::arg("c"));
+
+    m.def("sin", &vectorSin, "Calculate the sine of a vector vec.", pybind11::arg("vec"));
 
     pybind11::register_exception<NumpyShapeError>(m, "NumpyShapeError");
     pybind11::register_exception<NumpyTypeError>(m, "NumpyTypeError");
